@@ -97,7 +97,7 @@ app.get("/app/", (req, res, next) => {
     res.end(res.statusCode+ ' ' +res.statusMessage)
 });
 
-app.use((req, res, next) => {
+/*app.use((req, res, next) => {
   let logdata = {
       remoteaddr: req.ip,
       remoteuser: req.user,
@@ -114,7 +114,7 @@ app.use((req, res, next) => {
   const info = stmt.run(logdata.remoteaddr, logdata.remoteuser, logdata.time, logdata.method, logdata.url, logdata.protocol, logdata.httpversion, logdata.status, logdata.referrer, logdata.useragent)
   //console.log(info)
   next();
-})
+})*/
 
 function coinFlip() {
     var x = Math.round(Math.random());
@@ -158,7 +158,7 @@ app.use(function(req, res){
     res.status(404).send('404 NOT FOUND')
 });
 
-//from a03
+//from a03/a04
     app.get('/app/flip/', (req, res) => {
         const flip = coinFlip()
         res.status(200).json({'flip' : flip})
