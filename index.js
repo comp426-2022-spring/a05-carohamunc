@@ -67,9 +67,9 @@ app.use( (req, res, next) => {
 
 if (args.log == true) {
 // Create a write stream to append (flags: 'a') to a file
-const WRITESTREAM = fs.createWriteStream('access.log', { flags: 'a' })
+  const WRITESTREAM = fs.createWriteStream('access.log', { flags: 'a' })
 // Set up the access logging middleware
-app.use(morgan('accesslog', { stream: WRITESTREAM }))
+  app.use(morgan('combined', { stream: WRITESTREAM }))
 }
 
 if (args.debug == true) {
@@ -96,6 +96,25 @@ app.get("/app/", (req, res, next) => {
     res.writeHead( res.statusCode, { 'Content-Type' : 'text/plain' });
     res.end(res.statusCode+ ' ' +res.statusMessage)
 });
+
+app.use((req, res, next) => {
+  let logdata = {
+      remoteaddr: req.ip,
+      remoteuser: req.user,
+      time: Date.now(),
+      method: req.method,
+      url: req.url,
+      protocol: req.protocol,
+      httpversion: req.httpVersion,
+      status: res.statusCode,
+      referrer: req.headers['referer'],
+      useragent: req.headers['user-agent']
+  };
+  const stmt = db.prepare('INSERT INTO accesslog (remoteaddr, remoteuser, time, method, url, protocol, httpversion, status, referrer, useragent) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+  const info = stmt.run(logdata.remoteaddr, logdata.remoteuser, logdata.time, logdata.method, logdata.url, logdata.protocol, logdata.httpversion, logdata.status, logdata.referrer, logdata.useragent)
+  //console.log(info)
+  next();
+})
 
 function coinFlip() {
     var x = Math.round(Math.random());
@@ -140,12 +159,12 @@ app.use(function(req, res){
 });
 
 //from a03
-    app.post('/app/flip/', (req, res) => {
+    app.get('/app/flip/', (req, res) => {
         const flip = coinFlip()
         res.status(200).json({'flip' : flip})
     });
     
-    app.post('/app/flips/:number/', (req, res) => {
+    app.get('/app/flips/:number/', (req, res) => {
         const flips = coinFlips(req.body.number)
         const count = countFlips(flips)
         res.status(200).json({'raw' : flips, 'summary' : count})
@@ -158,3 +177,9 @@ app.use(function(req, res){
     app.post('/app/flip/call/tails', (req, res) => {
         res.status(200).json(flipACoin("tails"))
     });
+
+    process.on('SIGINT', () => {
+      server.close(() => {
+      console.log('\nApp stopped.');
+    });
+  });
