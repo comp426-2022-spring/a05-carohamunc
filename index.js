@@ -40,7 +40,6 @@ if (args.help || args.h) {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-
 const server = app.listen(port, () => {
     console.log('App listening on port %PORT%'.replace('%PORT%',port))
 });
