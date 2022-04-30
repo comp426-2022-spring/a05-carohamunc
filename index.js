@@ -97,7 +97,6 @@ app.get("/app/", (req, res, next) => {
     res.end(res.statusCode+ ' ' +res.statusMessage)
 });
 
-
 function coinFlip() {
     var x = Math.round(Math.random());
     if (x < 1) {return "heads";} else {return "tails";}
@@ -133,8 +132,6 @@ function coinFlip() {
       return {"call": call, "flip": flip, "result": "lose"}; 
     }
   }
-
-
 
 app.use(function(req, res){
     res.status(404).send('404 NOT FOUND')
