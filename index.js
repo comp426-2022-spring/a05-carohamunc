@@ -86,6 +86,7 @@ if (args.debug == true) {
         throw new Error('Error test successful.');
     });
 }
+
 // Serve static HTML files
 app.use(express.static('./public'));
 app.get("/app/", (req, res, next) => {
