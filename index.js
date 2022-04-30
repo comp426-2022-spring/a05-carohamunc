@@ -31,6 +31,7 @@ server.js [options]
 
 --help	Return this message and exit.
 `)
+
 // If --help or -h, echo help text to STDOUT and exit
 if (args.help || args.h) {
     console.log(help)
